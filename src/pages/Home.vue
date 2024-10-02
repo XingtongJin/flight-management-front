@@ -1,17 +1,20 @@
 <template>
-  <div>
-    <h1>HomePage</h1>
+  <div id="mainpage">
+    <NaviHeader></NaviHeader>
+    <router-view></router-view>
   </div>
-  
 </template>
 
-<script>
-export default {
-    name: 'HomePage',
 
+<script>
+import NaviHeader from '@/components/navi/NaviHeader.vue'
+export default {
+  name: 'HomePage',
+  components: { NaviHeader },
+    
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 
 </style>
