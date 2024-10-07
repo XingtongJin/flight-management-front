@@ -99,11 +99,21 @@
 							<!-- 航班状态 -->
 							<el-table-column prop="status" label="status" sortable width="120">
 							</el-table-column>
-							<el-table-column align="center">
+							<el-table-column align="center" label="order" width="300">
+								
+								<!-- 下单按钮 -->
 								<template slot-scope="scope">
-									<!-- 下单按钮 -->
-									<el-button size="mid" type="warning" @click="handleEdit(scope.$index, scope.row)">
-										order</el-button>
+									<el-button size="small" class="order-button" type="warning" 
+										@click="order(scope.row, 'E')"
+										>
+										economy
+									</el-button>
+										
+									<el-button size="small" class="order-button" type="warning"
+										@click="order(scope.row, 'B')"
+										>
+										bussiness
+									</el-button>
 								</template>
 							</el-table-column>
 						</el-table>
@@ -124,6 +134,7 @@
 <script>
 	// import {getQuickMenuList} from '@/api/ticket/ticketApi.js'
 import moment from 'moment'
+import { mapState } from 'vuex';
 
 
 	export default {
@@ -176,19 +187,29 @@ import moment from 'moment'
 
 			this.disabled = true;
 		},
+		...mapState({
 
+		}),
 		methods: {
 			async getAirportList() {
 				console.log("getAirportList")
 				this.$axios.get("/flight/airports")
 				.then((response) => {
-					var airportList = response.data.data;
+					var airportList = response.data.data
 					console.log("airportList: " + airportList);
-					this.startList = airportList;
-					this.endList = airportList;
+					this.startList = airportList
+					this.endList = airportList
 				}).catch((error)=>{
 					console.log(error)
 				})
+			},
+			order(row, flightType) {
+				// alert("点击了按钮1" + row.id + flightType);
+				// this.$store.state.flightType = flightType;
+				this.$store.commit('PUTFLIGHTINFO', row)
+				this.$store.commit('PUTFLIGHTTYPE', flightType)
+				console.log(this.$store.state.orderFlightInfo)
+				this.$router.push("/seat")
 			},
 			handleSelect(key, keyPath) {
 				console.log(key, keyPath);
@@ -241,7 +262,6 @@ import moment from 'moment'
 							}
 							this.list = newArray
 						}
-						
 						
 						if (dayDiff > 5) {
 							this.activeName = this.list[1].time;
@@ -440,10 +460,6 @@ import moment from 'moment'
 					this.noLimitEnd = false;
 				}
 			},
-			// 订票按钮
-			handleEdit(index, row) {
-				console.log(index, row);
-			},
 			// 选择时间
 			getDateChange() {
 
@@ -517,6 +533,7 @@ import moment from 'moment'
 						item.price = "$" + item.price
 						// 截取日期
 						item.deptTime = item.deptTime.substring(11, 19);
+						console.log(item.id)
 					});
 				}).catch((error)=>{
 					console.log(error)
