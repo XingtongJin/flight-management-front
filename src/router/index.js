@@ -2,8 +2,14 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "@/components/account/Login.vue";
 import Register from "@/components/account/Register.vue";
-import Home from "@/pages/home.vue";
 import axios from "@/utils/axios";
+import Home from "@/pages/Home.vue";
+import Flight from "@/pages/flight/Flight.vue";
+import Order from "@/pages/order/Order.vue";
+import PersonInfo from "@/pages/PersonInfo.vue";
+import Seat from "@/pages/flight/Seat.vue";
+import AddedServices from "@/pages/order/AddedServices.vue";
+import MyOrder from "@/pages/MyOrder.vue";
 
 Vue.use(VueRouter)
 
@@ -12,7 +18,34 @@ const router = new VueRouter({
 		{
 			name: 'home',
 			path: '/',
-			component: Home
+			component: Home,
+			children:[
+				{
+					name: 'flight',
+					path: 'flight',
+					component: Flight
+				},{
+					name: "seat",
+					path: "seat",
+					component: Seat
+				},{
+					name: "order",
+					path: "Order",
+					component: Order
+				}, {
+					name: "personInfo",
+					path: "personInfo",
+					component: PersonInfo
+				}, {
+					name: "addedServices",
+					path: "addedServices",
+					component: AddedServices
+				}, {
+					name: "myOrder",
+					path: "myOrder",
+					component: MyOrder
+				}
+			]
 		},
         {
             name: 'login',
@@ -34,25 +67,27 @@ router.beforeEach((to,from,next)=>{
 	}else{
 		//判断是否登陆
 		let token = JSON.parse(window.localStorage.getItem('token'));
-		console.log(token)
+		// console.log(token)
 		//没登陆的用户就去登陆
 		if(!token){
 			next({path:'/login'});
 		}else{
-			//登陆的用户就去校验token的合法性
+			// 登陆的用户就去校验token的合法性
 			axios.get('/user/checkToken', {
-				headers:{
-					'token': token
-				}
-			}).then((response)=>{
+				// headers:{
+				// 	'token': token
+				// }
+			})
+			.then((response)=>{
 				if(!response.data) {
 					console.log('校验失败')
 					next({path:'/error'})
 				}else{
           //如果说正确的话，直接路由跳转
 					next();
-        }
-			})
+				}
+			}
+		)
 		}
 	}
 })
