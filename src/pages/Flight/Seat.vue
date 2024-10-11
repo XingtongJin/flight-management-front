@@ -13,7 +13,7 @@
               <el-col :span="6">
                 <br>
                 <br>
-                <!-- 已出售座位 -->
+                <!-- sold seat -->
                 <span>
                   sold:
                   <svg t="1669614123076" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -29,7 +29,7 @@
               <el-col :span="5">
                 <br>
                 <br>
-                <!-- 已选座位 -->
+                <!-- selected seat -->
                 <span>
                   selected:
                   <svg t="1669614123076" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -45,7 +45,7 @@
               <el-col :span="6">
                 <br>
                 <br>
-                <!--  可选座位-->
+                <!--  selectable seat -->
                 <span>
                   available:
                   <svg t="1669571566025" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -194,7 +194,7 @@
 
 
 <script>
-  import {Message} from 'element-ui'
+import {Message} from 'element-ui'
 import { mapState } from 'vuex';
 
   export default {
@@ -205,9 +205,9 @@ import { mapState } from 'vuex';
         width: 3,
         planeModel: 'Boeing 737',
         seatData: [],
-        // 每行 6个
+        // bussiness seat list
         seatlist: [[], [], []],
-        // 每行18个
+        // economy seat list
         listmax: [
                   [],
                   [],
@@ -215,9 +215,11 @@ import { mapState } from 'vuex';
                   [],
                   [],
                 ],
+        // four lines for economy seats
         economyLine: [
           "A", "B", "", "D", "E"
         ],
+        // two lines for bussiness seats
         bussinessLine: [
           "A", "", "B"
         ],
@@ -230,6 +232,7 @@ import { mapState } from 'vuex';
         alert('please access this page by right way.')
         this.$router.push('/flight')
       }
+      // bussiness seat
       if (this.seatType == 'B') {
         this.$axios.get('/flight/businessSeat', {
           params: {
@@ -240,13 +243,16 @@ import { mapState } from 'vuex';
           this.seatData = response.data.data;
           response.data.data.forEach(seat => {
             const seatNumber = seat.seatNumber;
-            const soldValue = seat.sold ? 1 : 0; // 将 sold 转换为 1 或 0
+            // 1 is sold, 0 is unsold
+            const soldValue = seat.sold ? 1 : 0; 
             const rowIndex = parseInt(seatNumber.slice(0, -1)) - 1;
 
             if (seatNumber.endsWith('A')) {
-                this.seatlist[0].splice(rowIndex, 1, soldValue); // 尾号为 A 放到第一个子数组
+              // It ends with A in the first subarray
+                this.seatlist[0].splice(rowIndex, 1, soldValue);
             } else if (seatNumber.endsWith('B')) {
-              this.seatlist[2].splice(rowIndex, 1, soldValue); // 尾号为 B 放到第二个子数组
+              // It ends with B in the third subarray (second subarray is empty)
+              this.seatlist[2].splice(rowIndex, 1, soldValue); 
             }
           });
         }).catch((error)=>{
@@ -263,17 +269,22 @@ import { mapState } from 'vuex';
           this.seatData = response.data.data;
           response.data.data.forEach(seat => {
             const seatNumber = seat.seatNumber;
-            const soldValue = seat.sold ? 1 : 0; // 将 sold 转换为 1 或 0
+            // 1 is sold, 0 is unsold
+            const soldValue = seat.sold ? 1 : 0; 
             const rowIndex = parseInt(seatNumber.slice(0, -1)) - 1;
 
             if (seatNumber.endsWith('A')) {
-                this.listmax[0].splice(rowIndex, 1, soldValue); // 尾号为 A 放到第一个子数组
+              // It ends with A in the first subarray
+                this.listmax[0].splice(rowIndex, 1, soldValue);
             } else if (seatNumber.endsWith('B')) {
-              this.listmax[1].splice(rowIndex, 1, soldValue); // 尾号为 B 放到第二个子数组
+              // It ends with B in the second subarray
+              this.listmax[1].splice(rowIndex, 1, soldValue); 
             } else if (seatNumber.endsWith('D')) {
-              this.listmax[3].splice(rowIndex, 1, soldValue); // 尾号为 D 放到第四个子数组
+              // It ends with D in the fourth subarray (third subarray is empty)
+              this.listmax[3].splice(rowIndex, 1, soldValue); 
             } else if (seatNumber.endsWith('E')) {
-              this.listmax[4].splice(rowIndex, 1, soldValue); // 尾号为 E 放到第五个子数组
+              // It ends with E in the fifth subarray
+              this.listmax[4].splice(rowIndex, 1, soldValue); 
             }
         });
         }).catch((error)=>{
@@ -296,13 +307,13 @@ import { mapState } from 'vuex';
       listmax: {
         deep: true,
         handler(newVal, oldVal) {
-          console.log('数组改变了', newVal, oldVal);
+          console.log('list change', newVal, oldVal);
         },
       },
       seatlist: {
         deep: true,
         handler(newVal, oldVal) {
-          console.log('数组改变了', newVal, oldVal);
+          console.log('list change', newVal, oldVal);
         },
       }
     },
@@ -311,42 +322,37 @@ import { mapState } from 'vuex';
         console.log(seat)
         if(this.seatType === 'B') {
           console.log('bussiness class')
+          // If the status is 0, change the unselected status to selected
           if (seat.hhh == 0) {
             this.seatlist[seat.index1].splice(seat.index2, 1, 2)
-            // this.seatlist[seat.index1].splice(seat.index2, 1, 2)
-            // this.seatlist[seat.index1][seat.index2] = 2;
-            //如果状态是1，也就是已经选中的状态，点击就会变成未选中
+            // If the status is 1, that is, the selected state, clicking will change to unselected 
           } else if (seat.hhh == 2) {
             this.seatlist[seat.index1].splice(seat.index2, 1, 0)
-            // this.seatlist[seat.index1][seat.index2] = 0;
             console.log("cancel selected");
-            //如果状态2，也就是已经出售的座位，就提示从新选座
+            //In case of status 2, which is a seat that has already been sold, it is prompted to select a new seat
           } else if (seat.hhh == 1) {
             Message("already sold, please choose another seat");
-            //如果状态3，代表座位损坏，也是提示维修中。
           }
         } else if (this.seatType === 'E') {
           console.log('economy class')
+          // If the status is 0, change the unselected status to selected
           if (seat.hhh == 0) {
             this.listmax[seat.index1].splice(seat.index2, 1, 2)
-            // this.listmax[seat.index1][seat.index2] = 2;
-            //如果状态是1，也就是已经选中的状态，点击就会变成未选中
+            // If the status is 1, that is, the selected state, clicking will change to unselected 
           } else if (seat.hhh == 2) {
             this.listmax[seat.index1].splice(seat.index2, 1, 0)
-            // this.listmax[seat.index1][seat.index2] = 0;
             console.log("cancel selected");
-            //如果状态2，也就是已经出售的座位，就提示从新选座
+            // In case of status 2, which is a seat that has already been sold, it is prompted to select a new seat
           } else if (seat.hhh == 1) {
             Message("already sold, please choose another seat");
-            //如果状态3，代表座位损坏，也是提示维修中。
           }
           console.log(this.listmax)
         }
       },
       confirmSeat() {
-        // 经济舱
+        // economy class 
         if (this.seatType == "E") {
-          // 计算选座位数量
+          // count seat number
           for (let a = 0; a < this.listmax.length; a++) {
             console.log(this.listmax[a])
             if (this.listmax[a].filter(item => item == 2).length > 0) {
@@ -355,29 +361,26 @@ import { mapState } from 'vuex';
             }
           }
           console.log(this.info)
-          //没有选择座位
+          //didn't select seat
           if (this.info == 0) {
             console.log(this.info);
-            // console.log(listmax);
 
             Message({
-              message: '请先选择座位，再确认购买！',
+              message: 'Please select your seat before confirming your purchase!',
               type: 'warning',
             })
           }
-          //座位选多了
+          // seat selected more than 1
           else if (this.info > 1) {
             console.log(this.info);
             Message({
-              message: '只能选择一个座位',
+              message: 'Only one seat can be selected',
               type: 'warning',
             })
-            // this.info = 0;
+            this.info = 0;
           }
-          //选座符合要求，将信息保存在store中
+          // The seat selection meets the requirements and the information is saved in the store
           else {
-            // console.log(info);
-            //拿到座位坐标信息向后端请求
             let bool = true;
             let seat = '';
             for (let a = 0; bool && a < this.listmax.length; a++) {
@@ -404,7 +407,7 @@ import { mapState } from 'vuex';
             this.$router.push('/order')
           }
         }
-        // 商务舱
+        // bussiness class
         else {
           
           for (let a = 0; a < this.seatlist.length; a++) {
@@ -423,12 +426,11 @@ import { mapState } from 'vuex';
           }
           if (this.info == 0) {
             console.log(this.info);
-            // console.log(seatlist);
-            Message("请先选择座位，再确认购买！");
+            Message("Please select your seat before confirming your purchase!");
           } else if (this.info > 1) {
             console.log(this.info);
             Message({
-              message: '只能选择一个座位',
+              message: 'Only one seat can be selected',
               type: 'warning',
             })
             this.info = 0;
@@ -460,77 +462,7 @@ import { mapState } from 'vuex';
     }
 
   }
-// import { onBeforeMount, onMounted, ref } from "@vue/runtime-core";
-// import { useRouter, useRoute } from "vue-router";
-// import { useStore } from "vuex";
-// // import request from "@/axios/request.js";
-// import { ElMessage } from 'element-plus'
-
-//vuex
-
-// const store = useStore();
-//路由
-// const $router = useRouter();
-// const $route = useRoute();
-
-// const height = 3;
-// const width = 3;
-
-// onBeforeMount(() => { });
-// //------------------------------商务舱-------------------
-// const seatlist = ref([[0, 1, 0, 1, 0, 1, 0, 1], [], [0, 1, 0, 1, 0, 1, 0, 1]]);
-// function clickzuowei1(seat) {
-//   if (seat.hhh == 0) {
-//     seatlist.value[seat.index1][seat.index2] = 2;
-//     //如果状态是1，也就是已经选中的状态，点击就会变成未选中
-//   } else if (seat.hhh == 2) {
-//     seatlist.value[seat.index1][seat.index2] = 0;
-//     console.log("取消选择");
-//     //如果状态2，也就是已经出售的座位，就提示从新选座
-//   } else if (seat.hhh == 1) {
-//     ElMessage("此座位已出售，请从新选座");
-//     //如果状态3，代表座位损坏，也是提示维修中。
-//   }
-// }
-
-
-// //进入页面获取座位数组
-// onBeforeMount(() => {
-//   console.log($route.query.fid);
-//   // request({
-//   //   url: "/orders/getSeat",
-//   //   method: "post",
-//   //   data: {
-//   //     fid: $route.query.fid,
-//   //     seatType: $route.query.seatType,
-//   //   },
-//   // }).then(
-//   //   (respones) => {
-//   //     ElMessage("请求成功!");
-//   //     console.log(respones.data);
-//   //     listmax.value = respones.data.data[1];
-//   //     let x = listmax.value.length / 2;
-//   //     console.log("xx", x);
-//   //     listmax.value.splice(x, 0, []);
-
-//   //     seatlist.value = respones.data.data[0];
-//   //     let y = seatlist.value.length / 2;
-//   //     console.log("xx", y);
-//   //     seatlist.value.splice(y, 0, []);
-//   //   },
-//   //   (error) => {
-//   //     console.log("错误", error);
-//   //   }
-//   // );
-// });
-
-
-// //确定选座
-// let info = 0;
-
-
 </script>
-
 
 <style scoped>
 .box {

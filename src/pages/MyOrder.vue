@@ -7,15 +7,11 @@
                     style="border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
                     <div>
                         <div class="clearfix">
-                            <span style="font-size:18px">订单号：</span>
+                            <span style="font-size:18px">order number: </span>
                             <span style="color:blue;margin-right: 20px;font-size:18px">{{ item.oid }}</span>
-                            <span style="font-size:18px">预订日期:{{ item.createTime.slice(0, 10) }}</span>
+                            <span style="font-size:18px">order date: {{ item.createTime.slice(0, 10) }}</span>
                             <span style="color:blue;margin-left: 20px;opacity: 0.8;font-size:18px;cursor: pointer;"
-                                @click="deleteorder(index)">删除订单</span>
-                            <!-- <span style="color:blue;margin-left: 20px;opacity: 0.8;font-size:8px;cursor: pointer;"
-                                @click="seat(index)">值机选座</span> -->
-                            <!-- <el-button style="float: right; padding: 3px 0" type="text" @click="rebook(index)">
-                                改签</el-button> -->
+                                @click="deleteorder(index)">Refund</span>
                             <h1 class="price" style="font-size:25px;font-weight:normal ;">{{ '$' + item.price }}
                             </h1>
                         </div >
@@ -40,15 +36,11 @@
                     style="border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
                     <div>
                         <div class="clearfix">
-                            <span style="font-size:18px">订单号：</span>
+                            <span style="font-size:18px">order number: </span>
                             <span style="color:blue;margin-right: 20px;font-size:18px">{{ item.oid }}</span>
-                            <span style="font-size:18px">预订日期:{{ item.createTime.slice(0, 10) }}</span>
+                            <span style="font-size:18px">order date: {{ item.createTime.slice(0, 10) }}</span>
                             <span style="color:blue;margin-left: 20px;opacity: 0.8;font-size:18px;cursor: pointer;"
-                                @click="deleteorder(index)">删除订单</span>
-                            <!-- <span style="color:blue;margin-left: 20px;opacity: 0.8;font-size:8px;cursor: pointer;"
-                                @click="seat(index)">值机选座</span> -->
-                            <!-- <el-button style="float: right; padding: 3px 0" type="text" @click="rebook(index)">
-                                改签</el-button> -->
+                                @click="deleteorder(index)">Refund</span>
                             <h1 class="price" style="font-size:25px;font-weight:normal ;">{{ '$' + item.price }}
                             </h1>
                         </div >
@@ -73,15 +65,11 @@
                     style="border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
                     <div>
                         <div class="clearfix">
-                            <span style="font-size:18px">订单号：</span>
+                            <span style="font-size:18px">order number:</span>
                             <span style="color:blue;margin-right: 20px;font-size:18px">{{ item.oid }}</span>
-                            <span style="font-size:18px">预订日期:{{ item.createTime.slice(0, 10) }}</span>
+                            <span style="font-size:18px">order date: {{ item.createTime.slice(0, 10) }}</span>
                             <span style="color:blue;margin-left: 20px;opacity: 0.8;font-size:18px;cursor: pointer;"
-                                @click="deleteorder(index)">删除订单</span>
-                            <!-- <span style="color:blue;margin-left: 20px;opacity: 0.8;font-size:8px;cursor: pointer;"
-                                @click="seat(index)">值机选座</span> -->
-                            <!-- <el-button style="float: right; padding: 3px 0" type="text" @click="rebook(index)">
-                                改签</el-button> -->
+                                @click="deleteorder(index)">Refund</span>
                             <h1 class="price" style="font-size:25px;font-weight:normal ;">{{ '$' + item.price }}
                             </h1>
                         </div >
@@ -129,7 +117,10 @@ export default {
             console.log("allorders")
         },
         deleteorder(index) {
-            // alert("删除订单将自动退票！")
+            if (this.orders[index].status == 'completed') {
+                alert('The order is closed and non-refundable')
+            } else {
+                // alert("删除订单将自动退票！")
             this.$axios.delete({
                 url: "/order/delete",
                 params: {
@@ -155,7 +146,8 @@ export default {
             }).catch(error => {
                 console.log('错误', error)
             });
-            this.$message.success("退票成功！")
+            this.$message.success("refund success！")
+            }   
         },
         getAllOrders() {
             this.$axios.get('/order/allOrders')
@@ -230,47 +222,14 @@ export default {
         this.getAllOrders()
     }
 
-    // beforeMount: function () {
-    //     console.log("the component is now mounted");
-    //     let thay = this
-
-    //     request({
-    //         url: "/orders/order",
-    //         params: {
-    //             id: store.state.userInfo.userId
-    //         },
-    //         method: "get",
-    //         headers: { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    //     }).then(function (response) {
-
-    //         // console.log(typeof(store.state.userInfo.userId));
-
-    //         console.log(response);
-    //         thay.orders = response.data.data//数组替换
-    //     }).catch(function (error) {
-    //         console.log("请求失败");
-    //         console.log(error);
-    //     });
-    // }
 };
 </script>
 <style scoped>
-/* .Myorder {
-    height: 100vh;
-    background: #e0e0e0;
-}
 
-.goback {
-    position: fixed;
-    right: 5vw;
-    top: -10px;
-} */
 ::deep(el-tabs__item) {
-    /* 修改为您想要的文字大小 */
     font-size: 10px !important;
 }
 
-/* 卡片布局 */
 .box-card2 {
     width: 100%;
     min-height: 70px;

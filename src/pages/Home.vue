@@ -2,14 +2,14 @@
   <div id="mainpage">
     <NaviHeader></NaviHeader>
     <div v-if="this.$route.path == '/'">
-      <!-- 轮播图 -->
+      <!-- slide show -->
       <el-carousel height="800px" autoplay interval="3000">
         <el-carousel-item v-for="(image, index) in carouselImages" :key="index">
           <img :src="image" alt="carousel image" class="carousel-img" />
         </el-carousel-item>
       </el-carousel>
 
-      <!-- 按钮区域 -->
+      <!-- button area-->
       <div class="button-container">
         <el-button 
           class="custom-button" 
@@ -31,6 +31,7 @@
         </el-button>
       </div>
 
+      <!-- Introduction section -->
       <div class="description-section">
         <h2>Welcome to Our Flight Website</h2>
         <br/>

@@ -2,32 +2,35 @@ import axios from 'axios'
 import {Toast} from 'vant'
 
 let loading = null;
-// // 请求加载效果
+// Request loading effect
 function startLoading() {
     loading = Toast.loading({
         forbidClick: true,
         className: "custom-toast",
         loadingType: 'spinner',
-        message: '加载中...',
+        message: 'loading...',
         duration: 0
     })
 }
 
-// 关闭加载效果
+// close Request loading effect
 function endLoading() {
     if (loading) loading.clear();
 }
 
-axios.defaults.timeout = 12000 // 请求超时时间
+axios.defaults.timeout = 12000 // request timeout
 axios.defaults.baseURL = 'http://127.0.0.1:8080';
-
-
     
-// axios 请求拦截器
+// axios request interceptor
 axios.interceptors.request.use(
     config => {
         startLoading()
-        // 可在此设置要发送的token
+        console.log("request interceptor")
+        // set token in header
+        var token = JSON.parse(localStorage.getItem('token'))
+        config.headers['token'] = token;
+
+        console.log(token)
         return config
     },
     error => {
@@ -36,12 +39,11 @@ axios.interceptors.request.use(
     }
 )
 
-// axios respone拦截器
+// axios respone interceptor
 axios.interceptors.response.use(
     response => {
         endLoading()
-        //console.log(response, "响应成功")
-        // 可以添加token 检测
+        
         if (response.status === 200) {
             return response
         }
@@ -51,42 +53,42 @@ axios.interceptors.response.use(
         console.log(error, "响应失9999败")
 
         const responseCode = error
-        //console.log(responseCode, "响应码")
+        
         switch (responseCode) {
-            // 401：未登录
+            // 401：unauthorized
             case 401:
                 break
-                // 404请求不存在
+                // 404 request not exists
             case 404:
-                console.log("网络请求超时")
+                console.log("request timeout")
                 Toast.fail({
                     className: "custom-toast",
-                    message: '网络请求超时'
+                    message: 'request timeout'
                 })
                 break
             default:
-                console.log(error.message, "走这里吗")
+                console.log(error.message, "error")
                 Toast.fail({
                     className: "custom-toast",
                     message: error.message
                 })
         }
 
-        // 断网 或者 请求超时 状态
+        // Network disconnection or request timeout status
         if (!error.message) {
             // 请求超时状态
             if (error.message.includes('timeout')) {
                 console.log('超时了')
                 Toast.fail({
                     className: "custom-toast",
-                    message: '请求超时，请检查网络是否连接正常'
+                    message: 'request timeout, please check your Internet'
                 })
             } else {
                 // 可以展示断网组件
                 console.log('断网了')
                 Toast.fail({
                     className: "custom-toast",
-                    message: '请求超时，请检查网络是否连接正常'
+                    message: 'request timeout, please check your Internet'
                 })
             }
             return
@@ -95,4 +97,4 @@ axios.interceptors.response.use(
     }
 )
 
-export default new axios.create()
+export default axios

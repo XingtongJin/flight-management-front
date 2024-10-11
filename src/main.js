@@ -1,23 +1,23 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { Form, FormItem, Input, Checkbox, Button } from 'element-ui'
+import ElementUI from 'element-ui'
 import router from './router'
 import store from './store'
 import axios from './utils/axios'
+import qs from 'qs'
+import locale from 'element-ui/lib/locale/lang/en'
+import 'element-ui/lib/theme-chalk/index.css';
+import '@fortawesome/fontawesome-free/css/all.css';
 
+Vue.use(ElementUI, {locale})// Set the global language to English
 
-Vue.config.productionTip = false
-Vue.component(Button.name, Button)
-Vue.component(Form.name, Form)
-Vue.component(FormItem.name, FormItem)
-Vue.component(Input.name, Input)
-Vue.component(Checkbox.name, Checkbox)
 
 Vue.prototype.$axios = axios
-
+Vue.prototype.$qs = qs
 
 new Vue({
   el: '#app',
   render: h => h(App),
-  router
+  router,
+  store
 })

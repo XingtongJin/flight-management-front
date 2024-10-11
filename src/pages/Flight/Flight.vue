@@ -1,12 +1,12 @@
 <template>
 	
 	<div class="content-class">
-        <!-- 选择框 -->
+        <!-- select area -->
 		<div class="ticket-sale">
 			<el-form ref="ticketForm" :inline="true" :model="ticketForm" label-position="left" class="demo-form-inline"
 				label-width="100px">
 				<el-form-item label="depart airport">
-					<!-- 出发站 -->
+					<!-- dept -->
 					<el-select v-model="ticketForm.start" :popper-append-to-body="false" filterable remote
 						reserve-keyword default-first-option placeholder="departure" 
 						:loading="loading" @change="searchStart">
@@ -17,7 +17,7 @@
 				</el-form-item>
 				
 				<el-form-item label="arrive airport">
-					<!-- 到达站 -->
+					<!-- arrival -->
 					<el-select v-model="ticketForm.end" :popper-append-to-body="false" filterable remote reserve-keyword
 						default-first-option placeholder="arrive" :loading="loading"
 						@change="searchEnd" style="width: 252px;">
@@ -27,7 +27,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="date">
-					<!-- 日期 -->
+					<!-- date -->
 					<el-date-picker class="date-choose" @change="getDateChange" v-model="ticketForm.date"
 						:clearable="false" type="date" placeholder="date" :picker-options="datePicker">
 					</el-date-picker>
@@ -38,9 +38,9 @@
 			</el-form>
 		</div>
 
-        <!-- 车票框 -->
+        <!-- ticket area -->
 		<div class="ticket-case">
-            <!-- 左选框 -->
+            <!-- left button -->
 			<el-tabs type="border-card" v-model="activeName" :stretch="true" @tab-click="handleClick"
 				:before-leave="beforeLeave">
 				<el-tab-pane class="forward-class" name="toForward" :disabled="disabled">
@@ -49,33 +49,34 @@
 					</span>
 				</el-tab-pane>
 
-                <!-- 每个日期和对应的 -->
 				<el-tab-pane v-for="(item, index) in list" :key="index" :name="item.time">
 					<span slot="label">
 						<div>{{item.time.split("-")[1]+"-"+item.time.split("-")[2]}}</div>
 						<div>{{item.week}}</div>
 					</span>
-					<!-- 车票行 -->
+					<!-- ticket -->
 					<div>
 						<el-table :data="tableData" style="width: 100%"
 							:default-sort="{prop: 'date', order: 'descending'}"
 							:header-cell-style="{ color: '#000000D8',background:'#f0f0f0'}"
 							:cell-style="{ height: '50px', padding: '4px 0' }">
-							<!-- 航班编号 -->
+							<!-- flight code -->
 							<el-table-column prop="flightCode" label="flight code">
 							</el-table-column>
-							<!-- 出发时间 -->
+							<!-- departure time -->
 							<el-table-column prop="deptTime" label="dep time" sortable width="120">
+								<template v-slot="scope">
+									{{ scope.row.deptTime ? scope.row.deptTime.substring(11, 19) : '' }}
+								</template>
 							</el-table-column>
-							<!-- 机型 -->
+							<!-- airplane model -->
 							<el-table-column prop="planeModel" label="plane model">
 							</el-table-column>
-							<!-- 起始站 -->
+							<!-- departure and arrival airport -->
 							<el-table-column label="dept/arr airport" width="150">
 								<template slot-scope="scope">
 									<div class="">
 										<i class="fas fa-plane-departure"></i>
-										<!-- 出发站 -->
 										<span style="margin-left: 5px;">{{scope.row.deptAirportCode}}</span>
 									</div>
 									
@@ -85,33 +86,30 @@
 									</div>
 									<div class="">
 										<i class="fas fa-plane-arrival"></i>
-										<!-- 到达站 -->
 										<span style="margin-left: 5px;">{{scope.row.arrAirportCode}}</span>
 									</div>
 								</template>
 							</el-table-column>
-							<!-- 时间 -->
+							<!-- consume time -->
 							<el-table-column prop="consuming" label="consuming" width="130">
 							</el-table-column>
-							<!-- 价格 -->
+							<!-- price -->
 							<el-table-column prop="price" label="price" sortable width="120">
 							</el-table-column>
-							<!-- 航班状态 -->
+							<!-- flight time -->
 							<el-table-column prop="status" label="status" sortable width="120">
 							</el-table-column>
 							<el-table-column align="center" label="order" width="300">
 								
-								<!-- 下单按钮 -->
+								<!-- order button -->
 								<template slot-scope="scope">
 									<el-button size="small" class="order-button" type="warning" 
-										@click="order(scope.row, 'E')"
-										>
+										@click="order(scope.row, 'E')">
 										economy
 									</el-button>
 										
 									<el-button size="small" class="order-button" type="warning"
-										@click="order(scope.row, 'B')"
-										>
+										@click="order(scope.row, 'B')">
 										bussiness
 									</el-button>
 								</template>
@@ -151,28 +149,21 @@ import { mapState } from 'vuex';
 				},
 				list: [],
 				disabled: false,
-				noLimitTime: true,
-				noLimitBegin: true,
-				noLimitEnd: true,
 				checkedTime: [],
 				checkedBegin: [],
 				checkedEnd: [],
 				tableData: [],
-				// 起始站数据
 				startList: [],
 				loading: false,
-				// 到达站数据
 				endList: [],
 				datePicker: this.getDatePicker(),
 			}
 		},
 		async created() {
-			// 初始数据改为axios获取的机场数据的第一个数据
 			await this.getAirportList();
 
 			console.log("startList: " + this.startList)
 
-			// 页面刚刚进来的时候，购票时间轴
 			this.getTimeList();
 
 			this.tableData.date = this.list[0].time;
@@ -204,8 +195,6 @@ import { mapState } from 'vuex';
 				})
 			},
 			order(row, flightType) {
-				// alert("点击了按钮1" + row.id + flightType);
-				// this.$store.state.flightType = flightType;
 				this.$store.commit('PUTFLIGHTINFO', row)
 				this.$store.commit('PUTFLIGHTTYPE', flightType)
 				console.log(this.$store.state.orderFlightInfo)
@@ -215,32 +204,29 @@ import { mapState } from 'vuex';
 				console.log(key, keyPath);
 			},
 			searchStart(e) {
-				console.log("你选中的是", e);
+				console.log("you select: ", e);
 				console.log("sdkajdasljd", this.saleForm.startStation);
 			},
 			searchEnd(e) {
-				console.log("你选中的是", e);
+				console.log("you select: ", e);
 			},
-			// tab选项卡点击事件
 			handleClick(tab) {
-				// console.log(tab, event);
 				let arrTime = [];
 				let arrWeek = [];
 				let newArray = [];
 
-				// 截止日期：14天后的日期
+				// only can select date for 14 days
 				let limitDate = moment(new Date()).add(14, 'days').format("YYYY-MM-DD");
 				console.log("limitDate: " + limitDate)
 
-				// 左边的按钮
 				if (tab.name == "toForward") {
 					console.log(tab.name, 'tab.name')
-					// 如果数组第一个是当天日期，则左边的按钮不能点击
+					// If the first in the array is the date of the day, the button on the left cannot be clicked 
 					if (this.activeName == moment(new Date()).format("YYYY-MM-DD")) {
 						this.activeName = this.list[0].time;
 						this.disabled = true;
 					} else {
-						// 如果不是当天日期，则可以点击，并且是想前减一天
+						// If the date is not the same day, you can click, and want to subtract a day from the previous 
 						this.disabled = false;
 						let listFirst = this.list[0].time;
 						let nowDate = this.activeName;
@@ -266,14 +252,11 @@ import { mapState } from 'vuex';
 						if (dayDiff > 5) {
 							this.activeName = this.list[1].time;
 						} else {
-							// 日期和未来14天差小于等于5
+							// The difference between date and next 14 days is less than or equal to 5
 							this.activeName = this.list[7 - dayDiff].time;
-
 						}
-						// console.log("this.list[1].time: " + this.list[1].time);
-						// this.ticketForm.date = this.list[1].time;
 					}
-					// 右边的按钮，点击加一天
+					// the right button, click Add a day
 				} else if (tab.name == "toNext") {
 					console.log("toNext", this.activeName);
 					this.disabled = false;
@@ -281,7 +264,7 @@ import { mapState } from 'vuex';
 						this.activeName = this.list[1].time
 					} else {
 						let listFirst = this.activeName;
-						// 转换为天数
+						// convert to day
 						const dayDiff = moment(limitDate, "YYYY-MM-DD").diff(moment(listFirst, "YYYY-MM-DD"), 'days') - 1
 						console.log("dayDiff: " + dayDiff)
 
@@ -302,17 +285,18 @@ import { mapState } from 'vuex';
 							newArray.push(obj)
 						}
 						this.list = newArray;
-						// 如果日期差大于等于5则处于第二位
+						// If the date difference is greater than or equal to 5, it is in second place
 						if (dayDiff > 5) {
 							this.activeName = this.list[1].time;
 						} else {
-							// 日期和未来14天差小于5
+							// The difference between the date and the next 14 days is less than 5, which is in the rear position
 							console.log(8 - dayDiff)
 							this.activeName = this.list[7 - dayDiff].time;
 							console.log()
 						}
 					}
-					// 如果点击的是当天的日期，则显示在第一个，否则其他的都是显示在第二个tab
+					// If the date of the day is clicked, it is displayed in the first one
+					//  otherwise everything else is displayed in the second tab 
 				} else if (tab.name == moment(new Date()).format("YYYY-MM-DD")) {
 					// this.getTimeList();
 					this.activeName = this.list[0].time;
@@ -321,7 +305,7 @@ import { mapState } from 'vuex';
 					this.disabled = false;
 					let listFirst = tab.name;
 
-					// 转换为天数
+					// convert to day
 					const dayDiff = moment(limitDate, "YYYY-MM-DD").diff(moment(listFirst, "YYYY-MM-DD"), 'days') 
 
 					for (var index2 = (-7 + ((dayDiff > 6) ? 6 : dayDiff)); index2 < ((dayDiff > 6) ? 6 : dayDiff); index2++) {
@@ -339,25 +323,23 @@ import { mapState } from 'vuex';
 						};
 						newArray.push(obj)
 					}
-
 					
 					this.list = newArray;
-					// 如果日期差大于等于5则处于第二位
+					// If the date difference is greater than or equal to 5, it is in second place
 					if (dayDiff >= 6) {
 						this.activeName = this.list[1].time;
 					} else {
-						// 日期和未来14天差小于5
+						// The difference between the date and the next 14 days is less than 5, which is in the rear position
 						this.activeName = this.list[7 - dayDiff].time;
 						console.log()
 					}
 					
 				}
-				// 更新选中的日期
+				//update chosen date
 				console.log(this.activeName)
 				this.ticketForm.date = this.activeName
 				this.searchFlight(this.ticketForm.start, this.ticketForm.end, this.ticketForm.date)
 			},
-			/* 活动标签切换时触发 */
 			beforeLeave(currentName) {
 				//重点，如果name是add，则什么都不触发
 				if (currentName == "toForward") {
@@ -368,35 +350,33 @@ import { mapState } from 'vuex';
 					// this.currentIndex = currentName;
 				}
 			},
-			// 获取七天的月日
+
+			// Get seven days of the month
 			getNextDate(date, item) {
 				var dd = new Date(date);
 				dd.setDate(dd.getDate() + item);
 				var y = dd.getFullYear();
 				var m = dd.getMonth() + 1 < 10 ? "0" + (dd.getMonth() + 1) : dd.getMonth() + 1;
 				var d = dd.getDate() < 10 ? "0" + dd.getDate() : dd.getDate();
-				// let day = dd.getDay();
-				// let weeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-				// let week = weeks[day];
 				console.log("nextDate: " + y + "-" + m + "-" + d)
 				return y + "-" + m + "-" + d;
 			},
-			// 获取周几
+			// get weekdays
 			getWeek(dateTime, index) {
 				let time = new Date(dateTime);
-				// 天数
+				// days number
 				time.setDate(time.getDate() + index)
 				let day = time.getDay();
 				let weeks = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 				let week = weeks[day];
 				return week;
 			},
-			// 获取时间列表
+			// Get time list
 			getTimeList() {
 				let timeArr = [];
 				let weekArr = [];
 				let newArr = [];
-				// 如果传过来的数据为空，则默认从当天日期开始排七天
+				// If the data is empty, the row starts seven days from the current date by default 
 				if (this.ticketForm.date == "" || this.ticketForm.date == null) {
 					console.log("date is empty")
 					for (var index = 0; index < 7; index++) {
@@ -405,7 +385,7 @@ import { mapState } from 'vuex';
 						timeArr.push(this.getNextDate(date, index));
 						weekArr.push(this.getWeek(date, index));
 					}
-					// 更新选择的日期
+					// Update the selected date
 					this.ticketForm.date = date;
 				} 
 				for (var i = 0; i < timeArr.length; i++) {
@@ -416,17 +396,11 @@ import { mapState } from 'vuex';
 					newArr.push(obj)
 				}
 				this.list = newArr;
-				
-				
-				// this.activeName = this.list[1].time
 			},
-			// 选择时间不限
-			limitTime() {
-				if (this.noLimitTime) this.checkedTime = [];
-			},
-			// 选择时间
+			
+			// choose time
 			timeChange() {
-				console.log("选择的时间是", this.checkedTime);
+				console.log("you select time: ", this.checkedTime);
 				let value = this.checkedTime
 				if (value.length == "") {
 					this.noLimitTime = true;
@@ -434,47 +408,21 @@ import { mapState } from 'vuex';
 					this.noLimitTime = false;
 				}
 			},
-			// 选择出发不限
-			limitBegin() {
-				if (this.noLimitBegin) this.checkedBegin = [];
-			},
-			// 选择出发
-			beginChange() {
-				let value = this.checkedBegin;
-				if (value.length == "") {
-					this.noLimitBegin = true;
-				} else {
-					this.noLimitBegin = false;
-				}
-			},
-			// 选择到达不限
-			limitEnd() {
-				if (this.noLimitEnd) this.checkedEnd = [];
-			},
-			// 选择到达
-			endChange() {
-				let value = this.checkedEnd;
-				if (value.length == "") {
-					this.noLimitEnd = true;
-				} else {
-					this.noLimitEnd = false;
-				}
-			},
-			// 选择时间
+			// choose date
 			getDateChange() {
 
 			},
-			// 查询
+			// search
 			onSubmit() {
 				let timeArr = [];
 				let weekArr = [];
 				let newArr = [];
-				// 点击查询按钮是你选择的日期
+				// Clicking the query button is the date of your choice
 				let dateForm = moment(this.ticketForm.date).format("YYYY-MM-DD")
 
 				console.log("时间", dateForm);
 
-				// 如果选择的日期是当天日期，则从第一个开始，否则从第二个开始
+				// If the date chosen is the same day, start with the first, otherwise start with the second 
 				if (dateForm == moment(new Date()).format("YYYY-MM-DD")) {
 					this.disabled = true;
 					this.list = [];
@@ -510,31 +458,35 @@ import { mapState } from 'vuex';
 				}
 				this.searchFlight(this.ticketForm.start, this.ticketForm.end, this.ticketForm.date);
 			},
-			// 小于今天的时间不能选
+			// Less than today cannot be selected
 			getDatePicker() {
 				return {
 					disabledDate(time) {
-						return time.getTime() < Date.now() - 8.64e7 //开始时间不选时，结束时间最大值小于等于当天 如果没有后面的-8.64e7就是不可以选择今天的
+						// If the start time is not selected, the maximum end time is less than or equal to the current day.
+						// If -8.64e7 is not followed, today cannot be selected 
+						return time.getTime() < Date.now() - 8.64e7 
 					}
 				}
 			},
 			searchFlight(departure, arrive, date) {
-				console.log(departure + " " + arrive, + " " + date)
+				console.log("searchFlight" + departure + " " + arrive, + " " + date)
 				this.$axios.post("/flight/searchFlights", {
 					deptId: departure,
 					arrId: arrive,
 					date: date
 				}).then((response) => {
 					this.tableData = response.data.data;
+					console.log(response.data.data)
+					console.log(this.tableData)
 					this.tableData.forEach(item => {
 						console.log(item.consuming)
-						// 字符串拼接
+						// String splicing
 						item.consuming = "about " + item.consuming + " hours";
 						item.price = "$" + item.price
-						// 截取日期
-						item.deptTime = item.deptTime.substring(11, 19);
-						console.log(item.id)
+						// item.deptTime = item.deptTime;
+						// item.arrTime = item.arrTime.substring(11, 19);
 					});
+					console.log(this.tableData)
 				}).catch((error)=>{
 					console.log(error)
 				})

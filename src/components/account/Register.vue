@@ -8,11 +8,14 @@
         <el-form-item label="password" prop="pass">
           <el-input type="password" v-model="ruleForm.pass" clearable></el-input>
         </el-form-item>
-        <el-form-item label="check password" prop="checkPass">
+        <el-form-item label="checkPass" prop="checkPass">
           <el-input type="password" v-model="ruleForm.checkPass" clearable></el-input>
         </el-form-item>
-        <el-form-item label="mobile" prop="mobile">
-          <el-input v-model="ruleForm.mobile" clearable></el-input>
+        <el-form-item label="nickname" prop="nickname">
+          <el-input v-model="ruleForm.nickname" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="tel" prop="tel">
+          <el-input v-model="ruleForm.tel" clearable></el-input>
         </el-form-item>
         <el-form-item label="email" prop="email">
           <el-input v-model="ruleForm.email" clearable></el-input>
@@ -36,44 +39,51 @@ export default {
     data() {
       var checkUser = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('用户名不能为空'))
+          callback(new Error('The user name cannot be empty'))
         }
         const regUser = /^[a-zA-Z0-9_-]{3,16}$/
         if (regUser.test(value)) {
           return callback()
         }
-        callback(new Error('用户名格式错误'))
+        callback(new Error('The user name format is incorrect'))
       }
       var checkMobile = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('手机号码不能为空'))
+          callback(new Error('The mobile phone number cannot be empty'))
         }
-        const regUser = /^((0\d{2,3}-\d{7,8})|(1[34578]\d{9}))$/
+        const regUser = /^((0[34679]\d{1}-?\d{7})|(02\d{1,2}-?\d{7,8}))$/
         if (regUser.test(value)) {
           return callback()
         }
-        callback(new Error('手机号码格式错误'))
+        callback(new Error('The mobile phone number format is incorrect'))
       }
       var checkEmail = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('邮箱不能为空'))
+          callback(new Error('The email cannot be empty'))
         }
         const regUser = /^([a-zA-Z0-9]+[-_]?)+@[a-zA-Z0-9]+\.[a-z]+$/
         if (regUser.test(value)) {
           return callback()
         }
-        callback(new Error('邮箱格式错误'))
+        callback(new Error('email format is incorrect'))
       }
       var checkName = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('姓名不能为空'))
+          callback(new Error('name cannot be empty'))
+        } else {
+          callback()
+        }
+      }
+      var checkNickName = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('nickname cannot be empty'))
         } else {
           callback()
         }
       }
       var validatePass = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请输入密码'))
+          callback(new Error('please input your password'))
         } else {
           if (this.ruleForm.checkPass !== '') {
             this.$refs.ruleForm.validateField('checkPass')
@@ -83,9 +93,9 @@ export default {
       }
       var validatePass2 = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请再次输入密码'))
+          callback(new Error('please input your password again'))
         } else if (value !== this.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'))
+          callback(new Error('Two password inconsistencies!'))
         } else {
           callback()
       }
@@ -95,7 +105,8 @@ export default {
           user: '',
           pass: '',
           checkPass: '',
-          mobile: '',
+          nickname: '',
+          tel: '',
           email: '',
           name: ''
         },
@@ -103,7 +114,8 @@ export default {
           user: [{ validator: checkUser, trigger: 'blur' }],
           pass: [{ validator: validatePass, trigger: 'blur' }],
           checkPass: [{ validator: validatePass2, trigger: 'blur' }],
-          mobile: [{ validator: checkMobile, trigger: 'blur' }],
+          nickname: [{ validator: checkNickName, trigger: 'blur' }],
+          tel: [{ validator: checkMobile, trigger: 'blur' }],
           email: [{ validator: checkEmail, trigger: 'blur' }],
           name: [{ validator: checkName, trigger: 'blur'}]
         }
@@ -111,22 +123,33 @@ export default {
     },
     methods: {
       returnForm() {
-        // 返回login界面
+        // back to login page
         this.$router.push('/login')
       },
       submitForm() {
         console.log(this.user)
         this.$axios.post('/user/register', 
-        {username: this.ruleForm.user, password: this.ruleForm.pass, mobile: this.ruleForm.mobile, email: this.ruleForm.email, name: this.ruleForm.name}).then(
+        {
+          username: this.ruleForm.user, 
+          password: this.ruleForm.pass, 
+          nickname: this.ruleForm.nickname,
+          tel: this.ruleForm.tel, 
+          email: this.ruleForm.email, 
+          name: this.ruleForm.name}).then(
           (response) => {
             console.log(response.body)
-            this.grouplist = response.body
-            alert('注册成功！')
-            this.$router.push('/login')
+            if (response.status == 200) {
+              this.grouplist = response.body
+              alert('registeration success!')
+              this.$router.push('/login')
+            } else {
+              alert('registeration failed!')
+            }
+            
           },
           (response) => {
             console.log(response)
-            alert('出问题啦！！！')
+            alert('problems happened!!!')
           }
         )
       }

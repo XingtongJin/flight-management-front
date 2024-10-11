@@ -2,7 +2,7 @@
 
 <div style="background-color: #545c64">
   <el-row type="flex" justify="start" align="middle">
-    <!-- 右边的菜单导航栏 -->
+    <!-- Top menu navigation bar-->
      <el-col :span="1" style="height:50px; align-items: center;">
       <img class="logoImg" src="@/assets/img/airLineLogo.png" alt="airline Logo" style="max-height: 100%;"/>
      </el-col>
@@ -22,7 +22,7 @@
       </el-menu>
     </el-col>
     
-      <!-- 左边的退出按钮 -->
+      <!-- The logout button on the left -->
       <el-col :span="4" style="background-color: #545c64">
         <el-button type="danger" @click="logout" icon="el-icon-power" style="color: white; ">
           Logout
