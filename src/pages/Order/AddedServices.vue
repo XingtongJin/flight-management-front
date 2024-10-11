@@ -1,7 +1,6 @@
 <template>
     <div class="common-layout" >
         <el-container>
-          <!-- 导航条 -->
           <el-header height="30px">
             <el-row :gutter="20">
                 <el-col :span="24">
@@ -215,8 +214,8 @@ export default {
             }).then( () => {
                 console.log("create new Order")
             }).catch((error)=>{
-					console.log(error)
-				})
+                console.log(error)
+            })
 
             this.$router.push({
                 path: "/myOrder",

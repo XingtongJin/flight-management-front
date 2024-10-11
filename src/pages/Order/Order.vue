@@ -1,78 +1,45 @@
 <template>
   <div class="common-layout">
       <el-container>
-          <!-- 导航条 -->
+          <!-- navi header -->
           <el-header height="30px">
               <el-row :gutter="20">
-                  <el-col :span="4">
-                  </el-col>
-                  <el-col :span="16">
+
+                  <el-col :span="24">
                       <el-steps :space="200" :active="1" simple>
                           <el-step title="passenger info" :icon="Edit" />
                           <el-step title="advanced service" :icon="UploadFilled" />
-                          <el-step title="payment" :="CreditCard" status='success' />
+                          <el-step title="payment" :icon="CreditCard" />
                       </el-steps>
-                  </el-col>
-                  <el-col :span="4">
                   </el-col>
               </el-row>
           </el-header>
-          <el-divider />
-          
+
           <el-container>
               <el-aside width="425px" style=" margin-top: 23px;margin-left: 20px;">
                   <el-card class="box-card2">
-                      <!-- 订单飞机票 -->
-                          <div class="a1">
-                              <el-row>
-                                  <el-col :span="1" class="line1">
-                                  </el-col>
-                                  <el-col :span="7" class="line1">
-                                      <span>{{ flightInfo.deptTime }}</span>
-                                  </el-col>
-                                  <el-col :span="3" class="line1">
-
-                                  </el-col>
-                                  <el-col :span="4" class="line1">
-                                      <span>{{ flightInfo.deptAirportCode }}</span>
-                                  </el-col>
-                                  <el-col :span="3" class="line1">
-                                      <span>---</span>
-                                  </el-col>
-                                  <el-col :span="4" class="line1">
-                                      <span>{{ flightInfo.arrAirportCode }}</span>
-                                  </el-col>
-                                  <el-col :span="1">
-                                  </el-col>
-                              </el-row>
-                          </div>
 
                           <div class="a2">
                               <el-row class="el-row1" style="margin-top:8px;">
-                                  <!-- <el-col :span="8" class="line2" style="margin-left: 35px;">
-                                      <span>{{ a.airline }}</span>
-                                  </el-col> -->
-                                  <el-col :span="10" class="line2">
+                                  <el-col :span="12" class="line2">
                                       <span> FlightCode: {{ flightInfo.flightCode }}</span>
                                   </el-col>
-                                  <el-col :span="10" class="line2">
-
-                                      <span v-if="seatType == 'B'">bussiness class: {{seatNumber}}</span>
-
-                                      <span v-else-if="seatType == 'E'">economy class: {{seatNumber}}</span>
-                                  </el-col>
-                                  <el-col :span="2" class="line2">
-
-                                  </el-col>
+                                  
+                              </el-row>
+                              <el-row class="el-row1"> 
+                                <el-col :span="15" class="line2">
+                                    <span v-if="seatType == 'B'">Seat: bussiness class {{seatNumber}}</span>
+                                    <span v-else-if="seatType == 'E'">Seat: economy class {{seatNumber}}</span>
+                                </el-col>
                               </el-row>
                           </div>
 
                           <div class="a3">
                               <el-row class="row-bg" justify="space-evenly" style="margin-top:5px;">
-                                  <el-col :span="6" style="font-size: 26px;">
+                                  <el-col :span="7" style="font-size: 18px;">
                                       <span>{{ flightInfo.deptTime }}</span>
                                   </el-col>
-                                  <el-col :span="6" style="font-size: 12px;margin-top: 0px;">
+                                  <el-col class="el-row1" :span="6" style="font-size: 12px;margin-top: 0px;">
                                       <span style="position: relative;top:5px;">
                                           <svg t="1670645198330" class="icon" viewBox="0 0 1024 1024" version="1.1"
                                               xmlns="http://www.w3.org/2000/svg" p-id="31664" width="16" height="16">
@@ -83,11 +50,15 @@
                                       </span>
 
                                       <span>{{ flightInfo.consuming }}</span>
+                                      <br/>
+                                      <span style="">
+                                          ========
+                                      </span>
 
                                   </el-col>
-                                  <el-col :span="6" style="font-size: 26px;">
+                                  <el-col :span="7" style="font-size: 18px;">
                                     <!-- {{ flightInfo.arrivalTime }} -->
-                                      <span> 22:50:00 </span>
+                                      <span> {{ flightInfo.arrTime }} </span>
                                   </el-col>
                                   <br>
                               </el-row>
@@ -97,7 +68,7 @@
                           <div class="a7">
                               <el-row class="row-bg" justify="space-evenly">
 
-                                  <el-col :span="6" style="font-size: 14px;">
+                                  <el-col :span="8" style="font-size: 15px;">
                                       <span>{{ flightInfo.deptAirportCode }} airport</span>
                                   </el-col>
                                   <el-col :span="8">
@@ -105,52 +76,23 @@
                                           ========
                                       </span>
                                   </el-col>
-                                  <el-col :span="6" style="font-size: 14px;">
+                                  <el-col :span="8" style="font-size: 15px;">
                                       <span>{{ flightInfo.arrAirportCode }} airport</span>
                                   </el-col>
                               </el-row>
                               <el-divider border-style="dashed" />
                           </div>
-
-                      <!-- <el-divider /> -->
-                      <!-- 每程订单价格 -->
-                      <!-- <div class="a4" v-for="(a, index) in $store.state.ordersmax" :key="index">
-                          <el-row>
-                              <el-col :span="8">
-                                  <span>第 {{ index = index + 1 }} 程成人</span>
-                              </el-col>
-                              <el-col :span="4">
-
-                              </el-col>
-                              <el-col :span="6">
-
-                              </el-col>
-                              <el-col :span="6">
-                                  <svg t="1669657670258" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                                      xmlns="http://www.w3.org/2000/svg" p-id="8477" width="16" height="16">
-                                      <path
-                                          d="M447.488 764.928l-197.632 0q-27.648-2.048-42.496-23.04t-17.92-46.592q3.072-25.6 17.92-41.984t42.496-18.432l197.632 0 0-64.512-197.632-1.024q-27.648-2.048-42.496-19.456t-17.92-44.032q3.072-25.6 17.92-41.984t42.496-18.432l147.456 0-137.216-241.664q-10.24-12.288-19.456-31.232t-8.192-41.472q5.12-28.672 20.48-46.592t57.344-23.04q24.576 2.048 44.032 16.896t31.744 32.256l155.648 284.672 171.008-286.72q12.288-17.408 31.744-30.72t44.032-16.384q15.36 1.024 28.16 4.096t22.528 10.24 16.384 20.48 9.728 34.816q0 29.696-20.48 56.32l-158.72 258.048 150.528 0q26.624 2.048 41.984 18.432t17.408 41.984q-2.048 26.624-17.92 45.056t-42.496 20.48l-195.584 1.024 0 62.464 196.608 0q26.624 2.048 41.984 20.48t17.408 44.032q-2.048 26.624-17.408 44.544t-41.984 19.968l-196.608-1.024 0 108.544q-4.096 87.04-95.232 87.04-45.056 0-70.144-21.504t-27.136-65.536l0-106.496z"
-                                          p-id="8478"></path>
-                                  </svg>
-                                   <span v-if="$store.state.seatType[index - 1] == 'Y'">{{ a.econmecyPrice }}</span>
-                                  <span v-else-if="$store.state.seatType[index - 1] == 'F'">{{ a.classPrice }}</span> -->
-                              <!-- </el-col>
-                          </el-row>
-                      </div> -->
-                      <!-- <div style="height: 80px;" v-if="$store.state.ordersmax.length == 1"></div> -->
-
-                      <!-- 订单总价格 -->
-                      <!-- <el-divider /> -->
                       <div class="a5">
                           <span> Price: {{ flightInfo.price }}</span>
                           <br>
                       </div>
                   </el-card>
               </el-aside>
+
               <el-container>
                   <el-main>
                       <div>
-                          <!-- 乘机人信息 -->
+                          <!-- passenger information -->
                           <div class="aa">
                               <el-card class="box-card">
                                   <template #header>
@@ -160,9 +102,6 @@
                                       </div>
                                   </template>
                                   <div>
-                                      <div class="aaaaa">
-                                          <!-- <span>姓名</span> -->
-                                      </div>
                                       <div class="group">
                                           <input required="" type="text" class="input" v-model="name">
                                           <span class="highlight"></span>
@@ -184,21 +123,19 @@
                                       <span class="bar"></span>
                                       <label>telphone</label>
                                   </div>
+
                                   <br>
 
                                   <el-button type="primary" @click="gogo"
                                       style="width:415px;height:45px;margin-left: 50px;">
                                       next step
                                   </el-button>
+
                                   <el-divider />
-                                  <!-- <div class="a6">
-                                      <el-button type="primary" link @click="add" :icon="Edit">
-                                          新增乘机人
-                                      </el-button>
-                                  </div> -->
                               </el-card>
                           </div>
                       </div>
+                      
                   </el-main>
                   <el-footer></el-footer>
               </el-container>
@@ -209,6 +146,7 @@
 </template>
  
 <script>
+import { Message } from 'element-ui';
 import { mapState } from 'vuex';
 
 
@@ -219,6 +157,7 @@ export default {
             name: '',
             email: '',
             telphone: '',
+            passengerInfo: {}
         }
     },
     computed:{
@@ -233,97 +172,49 @@ export default {
         console.log(this.$store.state.orderFlightInfo)
     }, 
     methods: {
+        // default user info
+        user() {
+          // 
+            this.$axios.get('/user/userInfo')
+            .then((response) => {
+                let user = response.data.data
+                this.name = user.realName
+                this.email = user.email
+                this.telphone = user.telphone
+            }).catch((error)=>{
+              console.log(error)
+            })
+        },
+        //next step
+        gogo() {
+          this.passengerInfo = {
+            name: this.name,
+            email: this.email,
+            telphone: this.telphone
+          }
+          if (this.passengerInfo.name != "" &&
+           this.passengerInfo.email != "" &&
+            this.passengerInfo.telphone != "") {
+              console.log(this.passengerInfo);
+              this.$store.commit("PUTPASSENGER", this.passengerInfo)
+              // store.dispatch("orders")
+              this.$router.push({
+                  path: '/addedServices',
+              })
+          }
+          else {
+              Message({
+                  showClose: true,
+                  message: 'please full the passenger info',
+                  type: 'warning',
+              })
+          }
 
+        }
     }
 }
 
 
-
-//用户基本信息
-
-
-// const value1 = ref(false)
-//收集乘机人信息数组
-// let aa = []
-
-
-// const Price = ref(0)
-
-// let orderlist = []
-
-// onBeforeMount(() => {
-  // request({
-  //         url: "/user",
-  //         method: "get",
-  //         data: {
-  //         }
-  //       }
-  //       ).then((respones) => {
-  //         console.log(respones);
-  //         // context.commit("OID", respones.data.data)
-
-  //       }, error => {
-  //         console.log('错误', error)
-  //       });
-// })
-
-//缓存组件的生命周期，类似挂载完成时
-// onActivated(() => {
-//   Price.value = 0
-//   orderlist = store.state.ordersmax
-//   console.log(orderlist);
-//   for (let a = 0; a < store.state.ordersmax.length; a++) {
-//       if (store.state.seatType[a] == 'Y') {
-//           Price.value = Price.value + store.state.ordersmax[a].econmecyPrice
-//       } else {
-//           Price.value = Price.value + store.state.ordersmax[a].classPrice
-//       }
-//   }
-// }
-// )
-
-//用户信息快捷键
-// function user() {
-//   if (value1.value) {
-//       xingming.value = '王小明'
-//       shengfengzheng.value = '44022214113563432323'
-//       shoujihaoma.value = "13415619882"
-//   } else {
-//       xingming.value = ''
-//       shengfengzheng.value = ''
-//       shoujihaoma.value = ""
-//   }
-
-// }
-
-//下一步
-// function gogo() {
-//   aa.push(xingming.value, shengfengzheng.value, shoujihaoma.value)
-
-//   if (aa[0] != "" && aa[1] != "" && aa[2] != "") {
-//       console.log(aa);
-//       store.commit("useradd", aa)
-//       store.dispatch("orders",)
-//       // store.dispatch("orders")
-//       $router.push({
-//           path: '/addedServices',
-//           query: {
-//               Price: Price.value
-//           }
-//       })
-//       aa = []
-//   }
-//   else {
-//       ElMessage({
-//           showClose: true,
-//           message: '请完善个人信息',
-//           type: 'warning',
-//       })
-
-//       aa = []
-//   }
-
-// }
 
 </script>
 
@@ -354,7 +245,7 @@ export default {
 }
 
 
-/* 输入框 */
+/* input lines */
 .group {
   position: relative;
   left: 60px;
@@ -456,6 +347,13 @@ label {
   top: 35px;
 }
 
+.el-row1 {
+    margin: 20px;
+}
+.a1{
+    margin: 10px;
+}
+
 .a4 {
   height: 30px;
 }
@@ -476,7 +374,7 @@ label {
 
 .a7 {
   position: relative;
-  top: 10px;
+  top: 20px;
 
 }
 
@@ -487,7 +385,7 @@ label {
 }
 
 .line2 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 200;
   color: #181717;
 }

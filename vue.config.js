@@ -1,8 +1,9 @@
 const { defineConfig } = require('@vue/cli-service')
 const baseUrl = 'http://127.0.0.1:8080'
 module.exports = defineConfig({
-  transpileDependencies: true,
-  devServer: {
+    publicPath: './',
+    transpileDependencies: true,
+    devServer: {
         proxy: {
             // //配置跨域
             [""]: {
@@ -14,5 +15,10 @@ module.exports = defineConfig({
                 }
             }
         }
+    },
+    configureWebpack: {
+        optimization: {
+            minimize: false, // 禁用代码压缩
+        },
     },
 })

@@ -3,12 +3,12 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex)
 
-// actions, 响应动作
+// actions
 const actions = {
 
 }
 
-// mutations, 操作数据
+// mutations, operate state data
 const mutations = {
     PUTFLIGHTINFO(state, flightInfo) {
         state.orderFlightInfo = flightInfo
@@ -19,22 +19,24 @@ const mutations = {
     PUTSEATNUMBER(state, seatNumber) {
         // console.log("mutation seatNumber: " + seatNumber)
         state.seatNumber = seatNumber
+    },
+    PUTPASSENGER(state, passenger) {
+        state.passenger = passenger
     }
 }
 
-// state， 存储数据
+// state， store data
 const state = {
-    // 订单页面 
-      //订单信息
+
       orders: [],
-      //订单信息
       orderFlightInfo: [],
-      //经济舱 E，商务舱 B
+      //Economy class E，bussiness class B
       seatType: 'E',
-      seatNumber: ''
+      seatNumber: '',
+      passenger: {}
 }
 
-// 创建store
+// create store
 export default new Vuex.Store({
     actions, mutations, state
 })

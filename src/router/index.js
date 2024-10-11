@@ -59,31 +59,25 @@ const router = new VueRouter({
     ]
 })
 
-//在进行任何一个跳转之前，都要进行验证是否登陆或者验证token是否合法
+//Before making any jump, it is necessary to verify whether to log in or verify that the token is legitimate 
 router.beforeEach((to,from,next)=>{
 	if(to.path.startsWith('/login') || to.path.startsWith('/register')){
-		window.localStorage.removeItem('access-admin');
+		window.localStorage.removeItem('token');
 		next();
 	}else{
-		//判断是否登陆
+		// check whether logged in
 		let token = JSON.parse(window.localStorage.getItem('token'));
 		// console.log(token)
-		//没登陆的用户就去登陆
 		if(!token){
 			next({path:'/login'});
 		}else{
-			// 登陆的用户就去校验token的合法性
-			axios.get('/user/checkToken', {
-				// headers:{
-				// 	'token': token
-				// }
-			})
+			// The logged-in user verifies the legitimacy of the token
+			axios.get('/user/checkToken', {})
 			.then((response)=>{
 				if(!response.data) {
 					console.log('校验失败')
-					next({path:'/error'})
+					next({path:'/login'})
 				}else{
-          //如果说正确的话，直接路由跳转
 					next();
 				}
 			}
